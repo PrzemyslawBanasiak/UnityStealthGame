@@ -1,4 +1,0 @@
-sceneSetups:
-- path: assets/Scenes/Level2Scene.unity
-  isLoaded: 1
-  isActive: 1
