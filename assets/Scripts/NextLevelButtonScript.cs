@@ -1,12 +1,10 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 
 public class NextLevelButtonScript : MonoBehaviour {
-	public SceneAsset NextLevel;
 	// Use this for initialization
 	void Start () {
 		Button btn = this.GetComponent<Button>();
@@ -14,6 +12,6 @@ public class NextLevelButtonScript : MonoBehaviour {
 	}
 	
 	void TaskOnClick () {
-		SceneManager.LoadScene(NextLevel.name);
+		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
 	}
 }
