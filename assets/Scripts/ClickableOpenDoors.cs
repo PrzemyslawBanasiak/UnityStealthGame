@@ -14,7 +14,7 @@ public class ClickableOpenDoors : IClickable {
 	}
 
 	public override void OnClick() {
-		player.GetComponent<NavMeshAgent>().destination = animationPosition.position;
+		player.GetComponent<UnityEngine.AI.NavMeshAgent>().destination = animationPosition.position;
 	}
 
 	public override void Reset() {

@@ -5,12 +5,12 @@ public class PathFollower : MonoBehaviour {
 	//System.Collections.ArrayList
 	public GameObject path;
 	private Transform[] pathPoints;
-	private NavMeshAgent agent;
+	private UnityEngine.AI.NavMeshAgent agent;
 	private int targetIndex = 0;
 
 	void Start() {
 		pathPoints = new Transform[path.transform.childCount];
-		agent = GetComponent<NavMeshAgent>();
+		agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
 		for(int i =0; i < path.transform.childCount; ++i)
 			pathPoints[i] = path.transform.GetChild(i);
 		agent.destination = pathPoints [0].position;

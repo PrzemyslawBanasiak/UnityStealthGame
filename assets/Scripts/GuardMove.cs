@@ -6,7 +6,7 @@ public class GuardMove : MonoBehaviour {
 	public float SightAngle = 75f;
     public float detectionTime = 1.5f;
 	private Transform[] pathPoints;
-	private NavMeshAgent agent;
+	private UnityEngine.AI.NavMeshAgent agent;
 	private int targetIndex = 0;
     private GameObject Player;
     private bool playerInSight = false;
@@ -18,7 +18,7 @@ public class GuardMove : MonoBehaviour {
 
 	void Start() {
 		pathPoints = new Transform[path.transform.childCount];
-		agent = GetComponent<NavMeshAgent>();
+		agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
 		for(int i =0; i < path.transform.childCount; ++i)
 			pathPoints[i] = path.transform.GetChild(i);
 		agent.destination = pathPoints [0].position;
