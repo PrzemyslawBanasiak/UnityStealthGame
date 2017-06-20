@@ -9,16 +9,28 @@ public class GuardMove : MonoBehaviour {
 	private UnityEngine.AI.NavMeshAgent agent;
 	private int targetIndex = 0;
     private GameObject Player;
-    private bool playerInSight = false;
     private Vector3 lastPlayerPosition;
     private float lastPlayerEnterSightTime;
     private float startLookingAroundTime = 0f;
     public float shortSightDistance = 0.2f;
     public float shortSightAngle = 210f;
+	public float shotRange = 3f;
     private bool wasPlayerInSight = false;
-    private bool isFollowing = false;
-    private bool isLookingAround = false;
     private Animator anim;
+
+	/* State Info */
+	private string currentState = "Patrol";
+	private bool playerLeftSight = false;
+	private bool playerInSight = false;
+	private bool isMoving = false;
+	private bool playerInShotRange = false;
+
+	/* Delayed Transition */
+	private string currentTransitionTo;
+	private float currentTransitionTime;
+	private bool delayedTransitionUpdated = false;
+
+	public bool ddd = false;
 
 
     void Start()
@@ -36,33 +48,71 @@ public class GuardMove : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (agent.remainingDistance < agent.radius) {
-            if (!isFollowing) {
-                targetIndex = (targetIndex + 1) % pathPoints.Length;
-            } else {
-                if (!isLookingAround)
-                {
-                    anim.SetTrigger("look_around");
-                    agent.isStopped = true;
-                    isLookingAround = true;
-                    startLookingAroundTime = Time.time;
-                } 
-                else if ((startLookingAroundTime + 1f) < Time.time)
-                {
-                    startLookingAroundTime = 0f;
-                    isFollowing = false;
-                    agent.isStopped = false;
-                    isLookingAround = false;
-                    agent.destination = pathPoints[targetIndex].position;
-                    GetComponent<Transform>().LookAt(agent.steeringTarget + transform.forward);
-                }
-            }
-			agent.destination = pathPoints [targetIndex].position;
-			GetComponent<Transform>().LookAt(agent.steeringTarget + transform.forward);
+		delayedTransitionUpdated = false;
+		if (currentState == "Patrol") {
+			agent.isStopped = false;
+			if (playerInSight) {
+				currentState = "FollowPlayer";
+			} else if (agent.remainingDistance < agent.radius) {
+				targetIndex = (targetIndex + 1) % pathPoints.Length;
+				agent.destination = pathPoints [targetIndex].position;
+				GetComponent<Transform> ().LookAt (agent.steeringTarget + transform.forward);	
+			}
 		}
 
-		Vector3 forward = transform.TransformDirection(Vector3.forward) * 10;
-		Debug.DrawRay(transform.position, forward, Color.green);
+		else if (currentState == "FollowPlayer") {
+			agent.isStopped = false;
+			if (!playerInSight)
+				DelayedTransition ("GotoPlayerPosition", 1f);
+			else if (playerInShotRange) 
+				currentState = "Aim";
+			agent.destination = lastPlayerPosition;
+		}
+
+		else if (currentState == "Aim") {
+			agent.isStopped = true;
+			if (!playerInSight)
+				currentState = "GotoPlayerPosition";
+			else
+				DelayedTransition ("Shot", detectionTime);
+		}
+
+		else if (currentState == "GotoPlayerPosition") {
+			agent.isStopped = false;
+			agent.destination = lastPlayerPosition;
+			if (playerInSight) {
+				currentState = "FollowPlayer";
+			} else if (agent.remainingDistance < agent.radius) {
+				currentState = "Look Around";
+			}
+		}
+
+		else if (currentState == "Look Around") {
+			if (playerInSight)
+				currentState = "FollowPlayer";
+			else
+				DelayedTransition ("Patrol", 4.8f);
+		}
+
+		else if (currentState == "Shot") {
+			agent.isStopped = true;
+			currentState = "Done";
+			GameObject.Find ("GameController").GetComponent<GameStatusController>().SetLost ();
+		}
+
+		if (!delayedTransitionUpdated)
+			currentTransitionTo = "";
+	}
+
+	void DelayedTransition (string to, float ttime) {
+		delayedTransitionUpdated = true;
+		if (currentTransitionTo == to) {
+			if (currentTransitionTime < Time.time)
+				currentState = to;
+		} else {
+			currentTransitionTo = to;
+			currentTransitionTime = Time.time + ttime;
+		}
 	}
     
 	void OnTriggerStay(Collider other) {
@@ -94,23 +144,17 @@ public class GuardMove : MonoBehaviour {
         lastPlayerPosition = other.transform.position;
         playerInSight = true;
 
-        if (!wasPlayerInSight)
-        {
-            agent.isStopped = true;
-            lastPlayerEnterSightTime = Time.time;
+        if (!wasPlayerInSight) {
+			anim.SetBool ("PlayerInSight", true);
         }
 
-        if((lastPlayerEnterSightTime + detectionTime) < Time.time) {
-            anim.SetTrigger("shot");
-            GameObject.Find("GameController").GetComponent<GameStatusController>().SetLost();
-        }
+		if (distance < shotRange)
+			playerInShotRange = true;
     }
 
     private void handlePlayerLeftSight()
     {
-        agent.destination = lastPlayerPosition;
-        agent.isStopped = false;
-        isFollowing = true;
+		anim.SetBool ("PlayerInSight", false);
     }
 
     private float truncate(float min, float max, float val) {
