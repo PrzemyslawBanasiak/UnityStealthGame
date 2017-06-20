@@ -14,7 +14,7 @@ public class GuardMove : MonoBehaviour {
     private float startLookingAroundTime = 0f;
     public float shortSightDistance = 0.2f;
     public float shortSightAngle = 210f;
-	public float shotRange = 3f;
+	public float shotRange = 3.5f;
     private bool wasPlayerInSight = false;
     private Animator anim;
 
@@ -106,11 +106,6 @@ public class GuardMove : MonoBehaviour {
 
 		if (!delayedTransitionUpdated)
 			currentTransitionTo = "";
-		UpdateAnimations ();
-	}
-
-	void UpdateAnimations(){
-		
 	}
 
 	void DelayedTransition (string to, float ttime) {
@@ -140,6 +135,9 @@ public class GuardMove : MonoBehaviour {
 		float angle = Vector3.Angle(direction, transform.forward);
         float distance = Vector3.Distance(other.transform.position, transform.position);
 
+		if (distance > 5.0f)
+			return;
+		
         if(angle > SightAngle/2 && !(distance < shortSightDistance && angle < shortSightAngle/2)) 
             return;
         
