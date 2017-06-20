@@ -49,6 +49,7 @@ public class GuardMove : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		delayedTransitionUpdated = false;
+
 		if (currentState == "Patrol") {
 			agent.isStopped = false;
 			if (playerInSight) {
@@ -69,14 +70,6 @@ public class GuardMove : MonoBehaviour {
 			agent.destination = lastPlayerPosition;
 		}
 
-		else if (currentState == "Aim") {
-			agent.isStopped = true;
-			if (!playerInSight)
-				currentState = "GotoPlayerPosition";
-			else
-				DelayedTransition ("Shot", detectionTime);
-		}
-
 		else if (currentState == "GotoPlayerPosition") {
 			agent.isStopped = false;
 			agent.destination = lastPlayerPosition;
@@ -88,13 +81,24 @@ public class GuardMove : MonoBehaviour {
 		}
 
 		else if (currentState == "Look Around") {
+			anim.SetTrigger ("look_around");
 			if (playerInSight)
 				currentState = "FollowPlayer";
 			else
-				DelayedTransition ("Patrol", 4.8f);
+				DelayedTransition ("Patrol", 5.5f);
+		} 
+
+		else if (currentState == "Aim") {
+			anim.SetTrigger ("aim");
+			agent.isStopped = true;
+			if (!playerInSight)
+				currentState = "GotoPlayerPosition";
+			else
+				DelayedTransition ("Shot", detectionTime);
 		}
 
 		else if (currentState == "Shot") {
+			anim.SetTrigger ("shot");
 			agent.isStopped = true;
 			currentState = "Done";
 			GameObject.Find ("GameController").GetComponent<GameStatusController>().SetLost ();
@@ -102,6 +106,11 @@ public class GuardMove : MonoBehaviour {
 
 		if (!delayedTransitionUpdated)
 			currentTransitionTo = "";
+		UpdateAnimations ();
+	}
+
+	void UpdateAnimations(){
+		
 	}
 
 	void DelayedTransition (string to, float ttime) {

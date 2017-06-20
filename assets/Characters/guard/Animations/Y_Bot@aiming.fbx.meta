@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 68ee4e79a05da094abb767dfbaf88350
+guid: b7396d918d372476988276c115736005
 timeCreated: 1478174304
 licenseType: Free
 ModelImporter:
@@ -169,8 +169,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Y_Bot@shooting
       takeName: mixamo.com
-      firstFrame: 4.6
-      lastFrame: 35
+      firstFrame: 0
+      lastFrame: 5.7
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

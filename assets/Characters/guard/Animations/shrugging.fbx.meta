@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 68ee4e79a05da094abb767dfbaf88350
-timeCreated: 1478174304
+guid: 9476875a8b0204d23a59b96e7fb6f8ef
+timeCreated: 1497951424
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
@@ -141,7 +141,7 @@ ModelImporter:
     400130: mixamorig:Spine1
     400132: mixamorig:Spine2
     400134: //RootNode
-    7400000: Y_Bot@shooting
+    7400000: mixamo.com
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -167,10 +167,10 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: Y_Bot@shooting
+      name: mixamo.com
       takeName: mixamo.com
-      firstFrame: 4.6
-      lastFrame: 35
+      firstFrame: 0
+      lastFrame: 55
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -327,7 +327,7 @@ ModelImporter:
         weight: 1
       - path: mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2/mixamorig:RightShoulder/mixamorig:RightArm/mixamorig:RightForeArm/mixamorig:RightHand/mixamorig:RightHandThumb1/mixamorig:RightHandThumb2/mixamorig:RightHandThumb3/mixamorig:RightHandThumb4
         weight: 1
-      maskType: 0
+      maskType: 3
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     isReadable: 1
@@ -369,7 +369,7 @@ ModelImporter:
     rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
     hasExtraRoot: 0
-    skeletonHasParents: 0
+    skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 2
   humanoidOversampling: 1
