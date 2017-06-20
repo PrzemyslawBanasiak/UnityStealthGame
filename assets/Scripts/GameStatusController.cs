@@ -20,6 +20,7 @@ public class GameStatusController : MonoBehaviour {
 	public void SetLost(){
 		lostCanvas.SetActive(true);
 		redLight.enabled = true;
+        GameObject.Find("Player").GetComponent<ClickToMove>().die();
 	}
 
 	public void SetWon() {

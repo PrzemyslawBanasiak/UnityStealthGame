@@ -31,9 +31,16 @@ public class ClickToMove : MonoBehaviour {
                 if(hitInfo.collider.tag == "ClickAble") {
                     handleClickAble(hitInfo.collider);
                 } else {
-                    agent.destination = hitInfo.point;
+                    if(!agent.isStopped)
+                        agent.destination = hitInfo.point;
                 }
             }
         }
+    }
+
+    public void die()
+    {
+        GetComponent<Animator>().SetTrigger("die");
+        agent.isStopped = true;
     }
 }

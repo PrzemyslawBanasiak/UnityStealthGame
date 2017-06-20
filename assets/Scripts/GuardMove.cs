@@ -12,25 +12,51 @@ public class GuardMove : MonoBehaviour {
     private bool playerInSight = false;
     private Vector3 lastPlayerPosition;
     private float lastPlayerEnterSightTime;
+    private float startLookingAroundTime = 0f;
     public float shortSightDistance = 0.2f;
     public float shortSightAngle = 210f;
+    private bool wasPlayerInSight = false;
+    private bool isFollowing = false;
+    private bool isLookingAround = false;
+    private Animator anim;
 
 
-	void Start() {
-		pathPoints = new Transform[path.transform.childCount];
+    void Start()
+    {
+        pathPoints = new Transform[path.transform.childCount];
 		agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
 		for(int i =0; i < path.transform.childCount; ++i)
 			pathPoints[i] = path.transform.GetChild(i);
 		agent.destination = pathPoints [0].position;
         Player = GameObject.FindWithTag("Player");
-        if(Player == null)
+        anim = GetComponent<Animator>();
+        if (Player == null)
             Debug.Log("Player Not Found");
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if (agent.remainingDistance < agent.radius) {
-			targetIndex = (targetIndex + 1) % pathPoints.Length;
+            if (!isFollowing) {
+                targetIndex = (targetIndex + 1) % pathPoints.Length;
+            } else {
+                if (!isLookingAround)
+                {
+                    anim.SetTrigger("look_around");
+                    agent.isStopped = true;
+                    isLookingAround = true;
+                    startLookingAroundTime = Time.time;
+                } 
+                else if ((startLookingAroundTime + 1f) < Time.time)
+                {
+                    startLookingAroundTime = 0f;
+                    isFollowing = false;
+                    agent.isStopped = false;
+                    isLookingAround = false;
+                    agent.destination = pathPoints[targetIndex].position;
+                    GetComponent<Transform>().LookAt(agent.steeringTarget + transform.forward);
+                }
+            }
 			agent.destination = pathPoints [targetIndex].position;
 			GetComponent<Transform>().LookAt(agent.steeringTarget + transform.forward);
 		}
@@ -43,10 +69,12 @@ public class GuardMove : MonoBehaviour {
         if (other.gameObject != Player)
             return;
         handlePlayerIsSight(other);
+        if (!playerInSight && wasPlayerInSight)
+            handlePlayerLeftSight();
     }
 
     private void handlePlayerIsSight(Collider other) {
-        bool wasPlayerInSight = playerInSight;
+        wasPlayerInSight = playerInSight;
         playerInSight = false;
 
         Vector3 direction = other.transform.position - transform.position;
@@ -66,13 +94,23 @@ public class GuardMove : MonoBehaviour {
         lastPlayerPosition = other.transform.position;
         playerInSight = true;
 
-        if(!wasPlayerInSight) {
+        if (!wasPlayerInSight)
+        {
+            agent.isStopped = true;
             lastPlayerEnterSightTime = Time.time;
         }
 
-        if((lastPlayerEnterSightTime + detectionTime) < Time.time) { 
+        if((lastPlayerEnterSightTime + detectionTime) < Time.time) {
+            anim.SetTrigger("shot");
             GameObject.Find("GameController").GetComponent<GameStatusController>().SetLost();
         }
+    }
+
+    private void handlePlayerLeftSight()
+    {
+        agent.destination = lastPlayerPosition;
+        agent.isStopped = false;
+        isFollowing = true;
     }
 
     private float truncate(float min, float max, float val) {
