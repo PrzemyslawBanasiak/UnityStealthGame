@@ -2,7 +2,6 @@
 using System.Collections;
 
 public class PathFollower : MonoBehaviour {
-	//System.Collections.ArrayList
 	public GameObject path;
 	private Transform[] pathPoints;
 	private UnityEngine.AI.NavMeshAgent agent;
@@ -16,7 +15,6 @@ public class PathFollower : MonoBehaviour {
 		agent.destination = pathPoints [0].position;
 	}
 	
-	// Update is called once per frame
 	void Update () {
 		if (agent.remainingDistance < agent.radius) {
 			targetIndex = (targetIndex + 1) % pathPoints.Length;

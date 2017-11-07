@@ -4,7 +4,11 @@ using System.Collections;
 public class GuardMove : MonoBehaviour {
     public GameObject path;
     public float SightAngle = 75f;
-    public float detectionTime = 1.5f;
+    public float detectionTime = 1.5f;    
+    public float shortSightDistance = 0.2f;
+    public float shortSightAngle = 210f;
+    public float shotRange = 3.5f;
+
     private Transform[] pathPoints;
     private UnityEngine.AI.NavMeshAgent agent;
     private int targetIndex = 0;
@@ -12,9 +16,6 @@ public class GuardMove : MonoBehaviour {
     private Vector3 lastPlayerPosition;
     private float lastPlayerEnterSightTime;
     private float startLookingAroundTime = 0f;
-    public float shortSightDistance = 0.2f;
-    public float shortSightAngle = 210f;
-    public float shotRange = 3.5f;
     private bool wasPlayerInSight = false;
     private Animator anim;
 
@@ -29,10 +30,7 @@ public class GuardMove : MonoBehaviour {
     private string currentTransitionTo;
     private float currentTransitionTime;
     private bool delayedTransitionUpdated = false;
-
-    public bool ddd = false;
-
-
+    
     void Start()
     {
         pathPoints = new Transform[path.transform.childCount];
@@ -122,12 +120,12 @@ public class GuardMove : MonoBehaviour {
     void OnTriggerStay(Collider other) {
         if (other.gameObject != Player)
             return;
-        handlePlayerIsSight(other);
+        HandlePlayerIsSight(other);
         if (!playerInSight && wasPlayerInSight)
-            handlePlayerLeftSight();
+            HandlePlayerLeftSight();
     }
 
-    private void handlePlayerIsSight(Collider other) {
+    private void HandlePlayerIsSight(Collider other) {
         wasPlayerInSight = playerInSight;
         playerInSight = false;
 
@@ -159,12 +157,12 @@ public class GuardMove : MonoBehaviour {
             playerInShotRange = true;
     }
 
-    private void handlePlayerLeftSight()
+    private void HandlePlayerLeftSight()
     {
         anim.SetBool ("PlayerInSight", false);
     }
 
-    private float truncate(float min, float max, float val) {
+    private float Truncate(float min, float max, float val) {
         if(val > max) 
             return max;
         if(val < min)

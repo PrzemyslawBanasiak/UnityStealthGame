@@ -10,7 +10,7 @@ public class ClickToMove : MonoBehaviour {
         agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
     }
 
-    void handleClickAble(Collider collider){
+    void HandleClickAble(Collider collider){
         target = collider.gameObject.GetComponent<IClickable>();
         if(target == null) {
             Debug.Log("Object Clickable but doesn't implement IClickable");
@@ -29,7 +29,7 @@ public class ClickToMove : MonoBehaviour {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray.origin, ray.direction, out hitInfo)) {
                 if(hitInfo.collider.tag == "ClickAble") {
-                    handleClickAble(hitInfo.collider);
+                    HandleClickAble(hitInfo.collider);
                 } else {
                     if(!agent.isStopped)
                         agent.destination = hitInfo.point;
@@ -38,7 +38,7 @@ public class ClickToMove : MonoBehaviour {
         }
     }
 
-    public void die()
+    public void Die()
     {
         GetComponent<Animator>().SetTrigger("die");
         agent.isStopped = true;

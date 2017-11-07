@@ -13,18 +13,18 @@ public class ScoreController : MonoBehaviour {
         text = GameObject.Find("Score").GetComponent<Text>();
         max = GameObject.Find("Gems").GetComponent<Transform>().childCount;
         statusController = this.GetComponent<GameStatusController>();
-        text.text = formatString();
+        text.text = FormatString();
     }
 
-    public void addScore(int add = 1) {
+    public void AddScore(int add = 1) {
         score += add;
-        text.text = formatString();
+        text.text = FormatString();
         if(score == max) {
             statusController.SetWon();
         }
     }
 
-    string formatString() {
+    string FormatString() {
         return score + " / " + max;
     }
 }
